@@ -8,6 +8,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import moment from "moment";
 import styled from "styled-components";
 import { Divider, Grid, CardActions, IconButton } from "@mui/material";
+import UndoIcon from "@mui/icons-material/Undo";
 import "../styles/Order.css";
 
 let DateDiv = styled.div`
@@ -32,14 +33,19 @@ export default function OrderCard(props) {
   let time = moment(d).format("hh:mm A");
 
   const completeOrder = (Order_ID) => {
-    console.log(Order_ID);
     axiosClient
       .post("/complete", {
         Order_ID,
       })
       .then((res) => {
         console.log(res);
+        props.moveOrder(info);
       });
+  };
+
+  const undoOrder = (Order_ID) => {
+    console.log(Order_ID);
+    props.moveOrder(info);
   };
 
   return (
@@ -78,9 +84,16 @@ export default function OrderCard(props) {
         </Grid>
       </CardContent>
       <CardActions disableSpacing className='card-actions'>
-        <IconButton onClick={() => completeOrder(info.Order_ID)}>
-          <CheckIcon />
-        </IconButton>
+        {info.Completed === 0 && (
+          <IconButton onClick={() => completeOrder(info.Order_ID)}>
+            <CheckIcon />
+          </IconButton>
+        )}
+        {info.Completed === 1 && (
+          <IconButton onClick={() => undoOrder(info.Order_ID)}>
+            <UndoIcon />
+          </IconButton>
+        )}
       </CardActions>
     </Card>
   );

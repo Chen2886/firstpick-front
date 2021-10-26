@@ -43,18 +43,21 @@ const StyledAddButton = styled(IconButton)`
 
 const StyledExpandWrapper = styled.div`
   margin: 5rem;
+  margin-top: 2rem;
 `;
 
 export default function Order() {
-  const [orders, setOrders] = React.useState({});
-  const [expand, setExpand] = React.useState([true, false]);
+  const [currentOrder, setCurrentOrder] = React.useState({});
+  const [completedOrder, setCompletedOrder] = React.useState({});
+  const [expand, setExpand] = React.useState([true, true]);
   const [loading, setLoading] = React.useState(true);
 
   // useEffect with empty array runs when components mount
   useEffect(() => {
     // use axiosClient created to get all orders
     axiosClient.get("/orders").then((res) => {
-      setOrders(res.data);
+      setCurrentOrder(res.data.Current);
+      setCompletedOrder(res.data.Completed);
       setLoading(false);
     });
   }, []);
@@ -63,6 +66,20 @@ export default function Order() {
     let arr = expand.slice();
     arr[index] = !arr[index];
     setExpand(arr);
+  };
+
+  const moveOrder = (order) => {
+    if (order.Completed === 1) {
+      order.Completed = 0;
+      setCurrentOrder([...currentOrder, order]);
+      const arr = completedOrder.filter((item) => item !== order);
+      setCompletedOrder(arr);
+    } else {
+      order.Completed = 1;
+      setCompletedOrder([...completedOrder, order]);
+      const arr = currentOrder.filter((item) => item !== order);
+      setCurrentOrder(arr);
+    }
   };
 
   return (
@@ -75,9 +92,9 @@ export default function Order() {
           <AccordionDetails>
             <StyledGridWrapper>
               <StyledGrid container justifyContent='center' alignItems='center'>
-                {orders.Current.map((item) => (
-                  <StyledGridItem item xs={4} key={item.Order_ID}>
-                    <OrderCard info={item}></OrderCard>
+                {currentOrder.map((item, i) => (
+                  <StyledGridItem item xs={4} key={i}>
+                    <OrderCard info={item} moveOrder={moveOrder}></OrderCard>
                   </StyledGridItem>
                 ))}
                 <AddOrderGridItem item xs={12}>
@@ -99,16 +116,11 @@ export default function Order() {
           <AccordionDetails>
             <StyledGridWrapper>
               <StyledGrid container justifyContent='center' alignItems='center'>
-                {orders.Completed.map((item) => (
-                  <StyledGridItem item xs={4} key={item.Order_ID}>
-                    <OrderCard info={item}></OrderCard>
+                {completedOrder.map((item, i) => (
+                  <StyledGridItem item xs={4} key={i}>
+                    <OrderCard info={item} moveOrder={moveOrder}></OrderCard>
                   </StyledGridItem>
                 ))}
-                <AddOrderGridItem item xs={12}>
-                  <StyledAddButton>
-                    <AddCircle fontSize='inherit'></AddCircle>
-                  </StyledAddButton>
-                </AddOrderGridItem>
               </StyledGrid>
             </StyledGridWrapper>
           </AccordionDetails>
