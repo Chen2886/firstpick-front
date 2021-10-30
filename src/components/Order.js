@@ -82,6 +82,16 @@ export default function Order() {
     }
   };
 
+  const deleteOrder = (order) => {
+    if (order.Completed === 1) {
+      const arr = completedOrder.filter((item) => item !== order);
+      setCompletedOrder(arr);
+    } else {
+      const arr = currentOrder.filter((item) => item !== order);
+      setCurrentOrder(arr);
+    }
+  };
+
   return (
     <StyledExpandWrapper>
       <Accordion expanded={expand[0]} onChange={() => handleExpand(0)}>
@@ -94,7 +104,10 @@ export default function Order() {
               <StyledGrid container justifyContent='center' alignItems='center'>
                 {currentOrder.map((item, i) => (
                   <StyledGridItem item xs={4} key={i}>
-                    <OrderCard info={item} moveOrder={moveOrder}></OrderCard>
+                    <OrderCard
+                      info={item}
+                      moveOrder={moveOrder}
+                      deleteOrder={deleteOrder}></OrderCard>
                   </StyledGridItem>
                 ))}
                 <AddOrderGridItem item xs={12}>
@@ -118,7 +131,10 @@ export default function Order() {
               <StyledGrid container justifyContent='center' alignItems='center'>
                 {completedOrder.map((item, i) => (
                   <StyledGridItem item xs={4} key={i}>
-                    <OrderCard info={item} moveOrder={moveOrder}></OrderCard>
+                    <OrderCard
+                      info={item}
+                      moveOrder={moveOrder}
+                      deleteOrder={deleteOrder}></OrderCard>
                   </StyledGridItem>
                 ))}
               </StyledGrid>

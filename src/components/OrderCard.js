@@ -5,6 +5,7 @@ import CardContent from "@mui/material/CardContent";
 import axiosClient from "../utils/axiosClient";
 import Typography from "@mui/material/Typography";
 import CheckIcon from "@mui/icons-material/Check";
+import DeleteIcon from "@mui/icons-material/Delete";
 import moment from "moment";
 import styled from "styled-components";
 import { Divider, Grid, CardActions, IconButton } from "@mui/material";
@@ -38,14 +39,28 @@ export default function OrderCard(props) {
         Order_ID,
       })
       .then((res) => {
-        console.log(res);
         props.moveOrder(info);
       });
   };
 
   const undoOrder = (Order_ID) => {
-    console.log(Order_ID);
-    props.moveOrder(info);
+    axiosClient
+      .post("/undo", {
+        Order_ID,
+      })
+      .then((res) => {
+        props.moveOrder(info);
+      });
+  };
+
+  const deleteOrder = (Order_ID) => {
+    axiosClient
+      .delete("/orders", {
+        data: { Order_ID: Order_ID },
+      })
+      .then((res) => {
+        props.deleteOrder(info);
+      });
   };
 
   return (
@@ -84,6 +99,9 @@ export default function OrderCard(props) {
         </Grid>
       </CardContent>
       <CardActions disableSpacing className='card-actions'>
+        <IconButton onClick={() => deleteOrder(info.Order_ID)}>
+          <DeleteIcon />
+        </IconButton>
         {info.Completed === 0 && (
           <IconButton onClick={() => completeOrder(info.Order_ID)}>
             <CheckIcon />
