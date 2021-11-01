@@ -109,7 +109,7 @@ export default function Order() {
             <StyledGridWrapper>
               <StyledGrid container justifyContent='center' alignItems='center'>
                 {currentOrder.map((item, i) => (
-                  <StyledGridItem item xs={4} key={i}>
+                  <StyledGridItem item sm={6} md={4} key={i}>
                     <OrderCard
                       info={item}
                       moveOrder={moveOrder}
@@ -136,7 +136,7 @@ export default function Order() {
             <StyledGridWrapper>
               <StyledGrid container justifyContent='center' alignItems='center'>
                 {completedOrder.map((item, i) => (
-                  <StyledGridItem item xs={4} key={i}>
+                  <StyledGridItem item sm={6} md={4} key={i}>
                     <OrderCard
                       info={item}
                       moveOrder={moveOrder}

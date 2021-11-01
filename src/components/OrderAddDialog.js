@@ -6,8 +6,25 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import AdapterDateFns from "@mui/lab/AdapterMoment";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import DateTimePicker from "@mui/lab/DateTimePicker";
+import axiosClient from "../utils/axiosClient";
 
 export default function OrderAddDialog(props) {
+  const [value, setValue] = React.useState(new Date());
+  const addOrder = () => {
+    console.log(value.toISOString());
+    axiosClient
+      .post("/orders", {
+        date: value.toISOString(),
+      })
+      .then((res) => {
+        setValue(new Date());
+        props.setOpenAddDialog(false);
+      });
+  };
+
   return (
     <Dialog
       open={props.openAddDialog === undefined ? false : props.openAddDialog}>
@@ -16,19 +33,20 @@ export default function OrderAddDialog(props) {
         <DialogContentText>
           Please enter the order information
         </DialogContentText>
-        <TextField
-          autoFocus
-          margin='dense'
-          id='name'
-          label='Email Address'
-          type='email'
-          fullWidth
-          variant='standard'
-        />
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <DateTimePicker
+            renderInput={(props) => <TextField {...props} />}
+            label='DateTimePicker'
+            value={value}
+            onChange={(newValue) => {
+              setValue(newValue);
+            }}
+          />
+        </LocalizationProvider>
       </DialogContent>
       <DialogActions>
         <Button onClick={() => props.setOpenAddDialog(false)}>Cancel</Button>
-        <Button onClick={() => props.setOpenAddDialog(false)}>Add Order</Button>
+        <Button onClick={addOrder}>Add Order</Button>
       </DialogActions>
     </Dialog>
   );
