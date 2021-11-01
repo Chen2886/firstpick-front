@@ -2,7 +2,11 @@ import React, { useEffect } from "react";
 import axiosClient from "../utils/axiosClient";
 
 // import { DataGrid } from '@mui/x-data-grid';
-import { DataGrid } from '@material-ui/data-grid'
+import { DataGrid } from '@material-ui/data-grid';
+import Fab from '@mui/material/Fab';
+import AddIcon from '@mui/icons-material/Add';
+
+import CustomerAddDialog from "./CustomerAddDialog";
 
 // add a customer
 // remove a customer
@@ -24,6 +28,7 @@ const columns = [
 export default function Customer() {
 
   const [customer, addCustomer] = React.useState([]);
+  const [openAddDialog, setOpenAddDialog] = React.useState(false);
   //const [customer, deleteCustomer] = React.useState({});
 
   // gets all the customers from backend the first time the component loads
@@ -34,15 +39,27 @@ export default function Customer() {
     });
   }, []);
 
+  // const showInputBox = (order) => {
+
+  // };
+
   // return <div>Customer</div>;
   return (
-    <div style={{ height: 800, width: '100%' }}>
+    <div style={{ height: 600, width: '100%' }}>
+      <CustomerAddDialog
+        key={openAddDialog}
+        openAddDialog={openAddDialog}
+        setOpenAddDialog={setOpenAddDialog}>
+      </CustomerAddDialog>
       <DataGrid
         rows={customer}
         columns={columns}
         pageSize={100}
         rowsPerPageOptions={[100]}
       />
+      <Fab onClick={() => setOpenAddDialog(true)} color="primary" aria-label="add">
+        <AddIcon />
+      </Fab>
     </div>
   );
 }
