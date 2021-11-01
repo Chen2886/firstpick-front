@@ -13,6 +13,7 @@ import {
 import styled from "styled-components";
 import { AddCircle } from "@mui/icons-material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import OrderAddDialog from "./OrderAddDialog";
 
 const StyledGrid = styled(Grid)`
   width: 100%;
@@ -51,6 +52,7 @@ export default function Order() {
   const [completedOrder, setCompletedOrder] = React.useState({});
   const [expand, setExpand] = React.useState([true, true]);
   const [loading, setLoading] = React.useState(true);
+  const [openAddDialog, setOpenAddDialog] = React.useState(false);
 
   // useEffect with empty array runs when components mount
   useEffect(() => {
@@ -94,6 +96,10 @@ export default function Order() {
 
   return (
     <StyledExpandWrapper>
+      <OrderAddDialog
+        key={openAddDialog}
+        openAddDialog={openAddDialog}
+        setOpenAddDialog={setOpenAddDialog}></OrderAddDialog>
       <Accordion expanded={expand[0]} onChange={() => handleExpand(0)}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography>Current Order</Typography>
@@ -111,7 +117,7 @@ export default function Order() {
                   </StyledGridItem>
                 ))}
                 <AddOrderGridItem item xs={12}>
-                  <StyledAddButton>
+                  <StyledAddButton onClick={() => setOpenAddDialog(true)}>
                     <AddCircle fontSize='inherit'></AddCircle>
                   </StyledAddButton>
                 </AddOrderGridItem>
