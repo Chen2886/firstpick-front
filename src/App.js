@@ -31,7 +31,7 @@ function App() {
   return (
     <Router>
       <div id='nav-bar'>
-        <AppBar position='static'>
+        <AppBar position='sticky'>
           <Toolbar>
             <IconButton
               size='large'
