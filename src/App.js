@@ -14,6 +14,7 @@ import Order from "./components/Order";
 import Customer from "./components/Customer";
 import Feedback from "./components/Feedback";
 import Inventory from "./components/Inventory";
+import Recipe from "./components/Recipe";
 import { buttonTheme } from "./styles/Theme";
 
 function App() {
@@ -25,7 +26,10 @@ function App() {
       Name: "Inventory",
       Link: "/inventory",
       Component: Inventory,
-    },
+    }, { Name: "Recipe",
+    Link: "/recipe",
+    Component: Recipe,
+  },
   ];
 
   return (
