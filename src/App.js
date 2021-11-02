@@ -14,6 +14,7 @@ import Order from "./components/Order";
 import Customer from "./components/Customer";
 import Feedback from "./components/Feedback";
 import Inventory from "./components/Inventory";
+import Recipe from "./components/Recipe";
 import { buttonTheme } from "./styles/Theme";
 
 function App() {
@@ -21,11 +22,13 @@ function App() {
     { Name: "Order", Link: "/", Component: Order },
     { Name: "Customer", Link: "/customer", Component: Customer },
     { Name: "Feedback", Link: "/feedback", Component: Feedback },
-    {
-      Name: "Inventory",
+    { Name: "Inventory",
       Link: "/inventory",
       Component: Inventory,
-    },
+    }, { Name: "Recipe",
+    Link: "/recipe",
+    Component: Recipe,
+  },
   ];
 
   return (
