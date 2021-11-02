@@ -52,6 +52,8 @@ export default function Order() {
   const [completedOrder, setCompletedOrder] = React.useState({});
   const [expand, setExpand] = React.useState([true, true]);
   const [loading, setLoading] = React.useState(true);
+  const [recipes, setRecipes] = React.useState([]);
+  const [customers, setCustomers] = React.useState([]);
   const [openAddDialog, setOpenAddDialog] = React.useState(false);
 
   // useEffect with empty array runs when components mount
@@ -61,6 +63,12 @@ export default function Order() {
       setCurrentOrder(res.data.Current);
       setCompletedOrder(res.data.Completed);
       setLoading(false);
+    });
+    axiosClient.get("/recipe").then((res) => {
+      setRecipes(res.data);
+    });
+    axiosClient.get("/customers").then((res) => {
+      setCustomers(res.data);
     });
   }, []);
 
@@ -98,6 +106,8 @@ export default function Order() {
     <StyledExpandWrapper>
       <OrderAddDialog
         key={openAddDialog}
+        recipes={recipes}
+        customers={customers}
         openAddDialog={openAddDialog}
         setOpenAddDialog={setOpenAddDialog}></OrderAddDialog>
       <Accordion expanded={expand[0]} onChange={() => handleExpand(0)}>

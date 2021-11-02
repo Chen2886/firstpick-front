@@ -30,7 +30,6 @@ export default function OrderCard(props) {
   let fn = info.First_Name === null ? "" : info.First_Name;
   let ln = info.Last_Name === null ? "" : info.Last_Name;
   let d = new Date(info.Date);
-  console.log(d);
   let date = moment(d).format("MM/DD/YYYY");
   let time = moment(d).format("hh:mm A");
 
