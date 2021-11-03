@@ -1,13 +1,11 @@
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { Switch, Route, Link } from "react-router-dom";
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
 
-import MenuIcon from "@mui/icons-material/Menu";
 import Order from "./components/Order";
 import Customer from "./components/Customer";
 import Feedback from "./components/Feedback";
 import Inventory from "./components/Inventory";
 import Recipe from "./components/Recipe";
-import { buttonTheme } from "./styles/Theme";
 
 const links = [
   { Name: "Order", Link: "/", Component: Order },
@@ -23,9 +21,9 @@ const links = [
 
 function App() {
   return (
-    <Router>
+    <>
       <Box sx={{ flexGrow: 1 }}>
-        <AppBar position='sticky'>
+        <AppBar position='sticky' color='default'>
           <Toolbar>
             <Typography variant='h6' component='div'>
               First Pick
@@ -35,8 +33,9 @@ function App() {
                 component={Link}
                 to={item.Link}
                 key={i}
-                style={{ marginLeft: "1rem", color: "orange" }}
-                variant='text'>
+                style={{ marginLeft: "1rem" }}
+                variant='text'
+                color='primary'>
                 {item.Name}
               </Button>
             ))}
@@ -48,7 +47,7 @@ function App() {
           <Route exact path={item.Link} component={item.Component} key={key} />
         ))}
       </Switch>
-    </Router>
+    </>
   );
 }
 
