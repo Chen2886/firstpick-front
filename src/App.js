@@ -35,7 +35,7 @@ function App() {
                 key={i}
                 style={{ marginLeft: "1rem" }}
                 variant='text'
-                color='primary'>
+                color='secondary'>
                 {item.Name}
               </Button>
             ))}
