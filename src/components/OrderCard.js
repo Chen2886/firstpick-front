@@ -64,7 +64,7 @@ export default function OrderCard(props) {
   };
 
   return (
-    <Card>
+    <Card style={{border: '1px solid grey'}}>
       <CardHeader title={info.Name} subheader={"$" + info.Price} />
       <Divider></Divider>
       <CardContent>
