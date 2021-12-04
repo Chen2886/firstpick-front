@@ -1,5 +1,4 @@
 import { createTheme } from "@material-ui/core";
-import { blueGrey, lightBlue } from "@material-ui/core/colors";
 
 const theme = createTheme({
   palette: {
@@ -10,6 +9,9 @@ const theme = createTheme({
     secondary: {
       main: "#FFC107",
     },
+  },
+  typography: {
+    fontFamily: `'Montserrat', sans-serif`,
   },
   shadows: ["none"],
 });
