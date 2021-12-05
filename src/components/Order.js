@@ -48,8 +48,7 @@ const StyledExpandWrapper = styled.div`
 `;
 
 export default function Order() {
-  const [currentOrder, setCurrentOrder] = React.useState({});
-  const [completedOrder, setCompletedOrder] = React.useState({});
+  const [orders, setOrders] = React.useState([]);
   const [expand, setExpand] = React.useState([true, true]);
   const [loading, setLoading] = React.useState(true);
   const [recipes, setRecipes] = React.useState([]);
@@ -60,8 +59,7 @@ export default function Order() {
   useEffect(() => {
     // use axiosClient created to get all orders
     axiosClient.get("/orders").then((res) => {
-      setCurrentOrder(res.data.Current);
-      setCompletedOrder(res.data.Completed);
+      setOrders(res.data);
       setLoading(false);
     });
     axiosClient.get("/recipe").then((res) => {
@@ -79,27 +77,16 @@ export default function Order() {
   };
 
   const moveOrder = (order) => {
-    if (order.Completed === 1) {
-      order.Completed = 0;
-      setCurrentOrder([...currentOrder, order]);
-      const arr = completedOrder.filter((item) => item !== order);
-      setCompletedOrder(arr);
-    } else {
-      order.Completed = 1;
-      setCompletedOrder([...completedOrder, order]);
-      const arr = currentOrder.filter((item) => item !== order);
-      setCurrentOrder(arr);
-    }
+    var newOrders = [...orders];
+    var newOrder = order;
+    newOrder.Completed = order.Completed === 1 ? 0 : 1;
+    newOrders[orders.indexOf(order)] = newOrder;
+    setOrders(newOrders);
   };
 
   const deleteOrder = (order) => {
-    if (order.Completed === 1) {
-      const arr = completedOrder.filter((item) => item !== order);
-      setCompletedOrder(arr);
-    } else {
-      const arr = currentOrder.filter((item) => item !== order);
-      setCurrentOrder(arr);
-    }
+    const arr = orders.filter((item) => item !== order);
+    setOrders(arr);
   };
 
   return (
@@ -118,14 +105,23 @@ export default function Order() {
           <AccordionDetails>
             <StyledGridWrapper>
               <StyledGrid container justifyContent='center' alignItems='center'>
-                {currentOrder.map((item, i) => (
-                  <StyledGridItem item sm={6} md={4} key={i}>
-                    <OrderCard
-                      info={item}
-                      moveOrder={moveOrder}
-                      deleteOrder={deleteOrder}></OrderCard>
-                  </StyledGridItem>
-                ))}
+                {orders
+                  .filter((item) => item.Completed === 0)
+                  .map((item, i) => {
+                    return (
+                      <StyledGridItem
+                        item
+                        xs={12}
+                        sm={6}
+                        md={4}
+                        key={i + item.Completed}>
+                        <OrderCard
+                          info={item}
+                          moveOrder={moveOrder}
+                          deleteOrder={deleteOrder}></OrderCard>
+                      </StyledGridItem>
+                    );
+                  })}
                 <AddOrderGridItem item xs={12}>
                   <StyledAddButton onClick={() => setOpenAddDialog(true)}>
                     <AddCircle fontSize='inherit'></AddCircle>
@@ -145,14 +141,23 @@ export default function Order() {
           <AccordionDetails>
             <StyledGridWrapper>
               <StyledGrid container justifyContent='center' alignItems='center'>
-                {completedOrder.map((item, i) => (
-                  <StyledGridItem item sm={6} md={4} key={i}>
-                    <OrderCard
-                      info={item}
-                      moveOrder={moveOrder}
-                      deleteOrder={deleteOrder}></OrderCard>
-                  </StyledGridItem>
-                ))}
+                {orders
+                  .filter((item) => item.Completed === 1)
+                  .map((item, i) => {
+                    return (
+                      <StyledGridItem
+                        item
+                        xs={12}
+                        sm={6}
+                        md={4}
+                        key={i + item.Completed}>
+                        <OrderCard
+                          info={item}
+                          moveOrder={moveOrder}
+                          deleteOrder={deleteOrder}></OrderCard>
+                      </StyledGridItem>
+                    );
+                  })}
               </StyledGrid>
             </StyledGridWrapper>
           </AccordionDetails>
