@@ -18,6 +18,7 @@ let DateDiv = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   text-align: center;
+  gap: 4px;
 `;
 
 let DividerWrapper = styled(Grid)`
@@ -64,12 +65,16 @@ export default function OrderCard(props) {
   };
 
   return (
-    <Card style={{border: '1px solid grey'}}>
+    <Card style={{ border: "1px solid grey" }}>
       <CardHeader title={info.Name} subheader={"$" + info.Price} />
       <Divider></Divider>
       <CardContent>
         <Grid container direction='row' justifyContent='center'>
-          <Grid item xs={5} className='info-grid-item'>
+          <Grid
+            item
+            xs={6}
+            className='info-grid-item'
+            style={{ borderRight: "1px solid grey" }}>
             <Typography
               variant='caption'
               color='text.secondary'
@@ -81,10 +86,11 @@ export default function OrderCard(props) {
               {fn.length === 0 && ln.length === 0 && "Anonymous"}
             </Typography>
           </Grid>
-          <DividerWrapper item xs={2}>
-            <Divider orientation='vertical'></Divider>
-          </DividerWrapper>
-          <Grid item xs={5} className='info-grid-item'>
+          <Grid
+            item
+            xs={6}
+            className='info-grid-item'
+            style={{ borderLeft: "1px solid grey" }}>
             <Typography
               variant='caption'
               color='text.secondary'
