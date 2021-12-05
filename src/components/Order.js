@@ -4,16 +4,19 @@ import axiosClient from "../utils/axiosClient";
 import {
   Grid,
   IconButton,
-  Accordion,
   Typography,
-  AccordionDetails,
-  AccordionSummary,
   CircularProgress,
+  Paper,
+  Card,
+  CardHeader,
+  CardContent,
+  Stack,
+  Divider,
 } from "@mui/material";
 import styled from "styled-components";
 import { AddCircle } from "@mui/icons-material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import OrderAddDialog from "./OrderAddDialog";
+import OrderEditDialog from "./OrderEditDialog";
 
 const StyledGrid = styled(Grid)`
   width: 100%;
@@ -25,21 +28,21 @@ const StyledGridItem = styled(Grid)`
   padding: 1rem;
 `;
 
-const AddOrderGridItem = styled(Grid)`
-  padding: 1rem;
+const AddOrderGridItem = styled.div`
   display: flex;
   justify-content: center;
 `;
 
-const StyledGridWrapper = styled.div`
+const StyledGridWrapper = styled(Paper)`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   box-sizing: border-box;
-  padding-top: 3rem;
 `;
 
 const StyledAddButton = styled(IconButton)`
   font-size: 50px;
+  padding: 0;
 `;
 
 const StyledExpandWrapper = styled.div`
@@ -47,22 +50,28 @@ const StyledExpandWrapper = styled.div`
   margin-top: 2rem;
 `;
 
+const PaddedGrid = styled(Grid)`
+  padding: 1rem;
+`;
+
 export default function Order() {
-  const [currentOrder, setCurrentOrder] = React.useState({});
-  const [completedOrder, setCompletedOrder] = React.useState({});
-  const [expand, setExpand] = React.useState([true, true]);
+  const [orders, setOrders] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
+  const [ordersInfo, setOrdersInfo] = React.useState([]);
   const [recipes, setRecipes] = React.useState([]);
   const [customers, setCustomers] = React.useState([]);
   const [openAddDialog, setOpenAddDialog] = React.useState(false);
+  const [editInfo, setEditInfo] = React.useState(undefined);
 
   // useEffect with empty array runs when components mount
   useEffect(() => {
     // use axiosClient created to get all orders
     axiosClient.get("/orders").then((res) => {
-      setCurrentOrder(res.data.Current);
-      setCompletedOrder(res.data.Completed);
+      setOrders(res.data);
       setLoading(false);
+    });
+    axiosClient.get("/ordersInfo").then((res) => {
+      setOrdersInfo(res.data);
     });
     axiosClient.get("/recipe").then((res) => {
       setRecipes(res.data);
@@ -72,34 +81,37 @@ export default function Order() {
     });
   }, []);
 
-  const handleExpand = (index) => {
-    let arr = expand.slice();
-    arr[index] = !arr[index];
-    setExpand(arr);
-  };
-
   const moveOrder = (order) => {
-    if (order.Completed === 1) {
-      order.Completed = 0;
-      setCurrentOrder([...currentOrder, order]);
-      const arr = completedOrder.filter((item) => item !== order);
-      setCompletedOrder(arr);
-    } else {
-      order.Completed = 1;
-      setCompletedOrder([...completedOrder, order]);
-      const arr = currentOrder.filter((item) => item !== order);
-      setCurrentOrder(arr);
-    }
+    var newOrders = [...orders];
+    var newOrder = order;
+    newOrder.Completed = order.Completed === 1 ? 0 : 1;
+    newOrders[orders.indexOf(order)] = newOrder;
+    setOrders(newOrders);
   };
 
   const deleteOrder = (order) => {
-    if (order.Completed === 1) {
-      const arr = completedOrder.filter((item) => item !== order);
-      setCompletedOrder(arr);
-    } else {
-      const arr = currentOrder.filter((item) => item !== order);
-      setCurrentOrder(arr);
-    }
+    const arr = orders.filter((item) => item !== order);
+    setOrders(arr);
+    axiosClient.get("/ordersInfo").then((res) => {
+      setOrdersInfo(res.data);
+    });
+  };
+
+  const addOrder = () => {
+    pullOrders();
+  };
+
+  const pullOrders = () => {
+    axiosClient.get("/orders").then((res) => {
+      setOrders(res.data);
+    });
+    axiosClient.get("/ordersInfo").then((res) => {
+      setOrdersInfo(res.data);
+    });
+  };
+
+  const editOrder = (info) => {
+    setEditInfo(info);
   };
 
   return (
@@ -109,56 +121,114 @@ export default function Order() {
         recipes={recipes}
         customers={customers}
         openAddDialog={openAddDialog}
-        setOpenAddDialog={setOpenAddDialog}></OrderAddDialog>
-      <Accordion expanded={expand[0]} onChange={() => handleExpand(0)}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography>Current Order</Typography>
-        </AccordionSummary>
-        {!loading && (
-          <AccordionDetails>
+        setOpenAddDialog={setOpenAddDialog}
+        addOrder={addOrder}></OrderAddDialog>
+      <OrderEditDialog
+        info={editInfo}
+        recipes={recipes}
+        customers={customers}
+        editOrder={editOrder}
+        pullOrders={pullOrders}></OrderEditDialog>
+      <Grid container>
+        <PaddedGrid item xs={9}>
+          {!loading && (
             <StyledGridWrapper>
               <StyledGrid container justifyContent='center' alignItems='center'>
-                {currentOrder.map((item, i) => (
-                  <StyledGridItem item sm={6} md={4} key={i}>
-                    <OrderCard
-                      info={item}
-                      moveOrder={moveOrder}
-                      deleteOrder={deleteOrder}></OrderCard>
-                  </StyledGridItem>
-                ))}
-                <AddOrderGridItem item xs={12}>
-                  <StyledAddButton onClick={() => setOpenAddDialog(true)}>
-                    <AddCircle fontSize='inherit'></AddCircle>
-                  </StyledAddButton>
-                </AddOrderGridItem>
+                <StyledGridItem item xs={12}>
+                  <Stack
+                    justifyContent='space-between'
+                    direction='row'
+                    alignItems='flex-start'>
+                    <Typography variant='h4'>In Progress</Typography>
+                    <AddOrderGridItem item xs={12}>
+                      <StyledAddButton onClick={() => setOpenAddDialog(true)}>
+                        <AddCircle fontSize='inherit'></AddCircle>
+                      </StyledAddButton>
+                    </AddOrderGridItem>
+                  </Stack>
+                </StyledGridItem>
+                {orders
+                  .filter((item) => item.Completed === 0)
+                  .map((item, i) => {
+                    return (
+                      <StyledGridItem item xs={12} sm={6} lg={4} key={i}>
+                        <OrderCard
+                          info={item}
+                          moveOrder={moveOrder}
+                          deleteOrder={deleteOrder}
+                          editOrder={editOrder}></OrderCard>
+                      </StyledGridItem>
+                    );
+                  })}
               </StyledGrid>
             </StyledGridWrapper>
-          </AccordionDetails>
-        )}
-        {loading && <CircularProgress></CircularProgress>}
-      </Accordion>
-      <Accordion expanded={expand[1]} onChange={() => handleExpand(1)}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography>Completed Order</Typography>
-        </AccordionSummary>
-        {!loading && (
-          <AccordionDetails>
+          )}
+          {loading && <CircularProgress></CircularProgress>}
+        </PaddedGrid>
+        <PaddedGrid item xs={3}>
+          <StyledGridWrapper>
+            <div style={{ padding: "1rem" }}>
+              <Typography variant='h4'>Leaderboard</Typography>
+            </div>
+            {ordersInfo.map((item, i) => (
+              <div key={i}>
+                <Card>
+                  <CardHeader
+                    title={`#${i + 1} ${item.name}`}
+                    titleTypographyProps={{ variant: "h6" }}
+                    style={{ paddingBottom: "0" }}></CardHeader>
+                  <CardContent>
+                    <Stack direction='row' justifyContent='space-between'>
+                      <Stack>
+                        <Typography variant='caption'>
+                          Number of Orders
+                        </Typography>
+                        <Typography variant='body1'>
+                          {item.num_orders}
+                        </Typography>
+                      </Stack>
+                      <Stack>
+                        <Typography variant='caption'>Money Spent</Typography>
+                        <Typography
+                          variant='body1'
+                          style={{ textAlign: "end" }}>
+                          {"$" + item.spent}
+                        </Typography>
+                      </Stack>
+                    </Stack>
+                  </CardContent>
+                </Card>
+                <Divider></Divider>
+              </div>
+            ))}
+          </StyledGridWrapper>
+        </PaddedGrid>
+        <PaddedGrid item xs={12}>
+          {!loading && (
             <StyledGridWrapper>
               <StyledGrid container justifyContent='center' alignItems='center'>
-                {completedOrder.map((item, i) => (
-                  <StyledGridItem item sm={6} md={4} key={i}>
-                    <OrderCard
-                      info={item}
-                      moveOrder={moveOrder}
-                      deleteOrder={deleteOrder}></OrderCard>
-                  </StyledGridItem>
-                ))}
+                <StyledGridItem item xs={12}>
+                  <Typography variant='h4'>Completed</Typography>
+                </StyledGridItem>
+                {orders
+                  .filter((item) => item.Completed === 1)
+                  .map((item, i) => {
+                    return (
+                      <StyledGridItem item xs={12} sm={6} md={4} key={i}>
+                        <OrderCard
+                          info={item}
+                          moveOrder={moveOrder}
+                          deleteOrder={deleteOrder}
+                          editOrder={editOrder}></OrderCard>
+                      </StyledGridItem>
+                    );
+                  })}
               </StyledGrid>
             </StyledGridWrapper>
-          </AccordionDetails>
-        )}
-        {loading && <CircularProgress></CircularProgress>}
-      </Accordion>
+          )}
+          {loading && <CircularProgress></CircularProgress>}
+        </PaddedGrid>
+      </Grid>
     </StyledExpandWrapper>
   );
 }
