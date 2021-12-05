@@ -9,6 +9,7 @@ import {
   AccordionDetails,
   AccordionSummary,
   CircularProgress,
+  Paper,
 } from "@mui/material";
 import styled from "styled-components";
 import { AddCircle } from "@mui/icons-material";
@@ -49,7 +50,6 @@ const StyledExpandWrapper = styled.div`
 
 export default function Order() {
   const [orders, setOrders] = React.useState([]);
-  const [expand, setExpand] = React.useState([true, true]);
   const [loading, setLoading] = React.useState(true);
   const [recipes, setRecipes] = React.useState([]);
   const [customers, setCustomers] = React.useState([]);
@@ -69,12 +69,6 @@ export default function Order() {
       setCustomers(res.data);
     });
   }, []);
-
-  const handleExpand = (index) => {
-    let arr = expand.slice();
-    arr[index] = !arr[index];
-    setExpand(arr);
-  };
 
   const moveOrder = (order) => {
     var newOrders = [...orders];
@@ -97,12 +91,9 @@ export default function Order() {
         customers={customers}
         openAddDialog={openAddDialog}
         setOpenAddDialog={setOpenAddDialog}></OrderAddDialog>
-      <Accordion expanded={expand[0]} onChange={() => handleExpand(0)}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography>Current Order</Typography>
-        </AccordionSummary>
-        {!loading && (
-          <AccordionDetails>
+      <Grid container>
+        <Grid item xs={12} component={Paper}>
+          {!loading && (
             <StyledGridWrapper>
               <StyledGrid container justifyContent='center' alignItems='center'>
                 {orders
@@ -129,41 +120,41 @@ export default function Order() {
                 </AddOrderGridItem>
               </StyledGrid>
             </StyledGridWrapper>
-          </AccordionDetails>
-        )}
-        {loading && <CircularProgress></CircularProgress>}
-      </Accordion>
-      <Accordion expanded={expand[1]} onChange={() => handleExpand(1)}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography>Completed Order</Typography>
-        </AccordionSummary>
-        {!loading && (
-          <AccordionDetails>
-            <StyledGridWrapper>
-              <StyledGrid container justifyContent='center' alignItems='center'>
-                {orders
-                  .filter((item) => item.Completed === 1)
-                  .map((item, i) => {
-                    return (
-                      <StyledGridItem
-                        item
-                        xs={12}
-                        sm={6}
-                        md={4}
-                        key={i + item.Completed}>
-                        <OrderCard
-                          info={item}
-                          moveOrder={moveOrder}
-                          deleteOrder={deleteOrder}></OrderCard>
-                      </StyledGridItem>
-                    );
-                  })}
-              </StyledGrid>
-            </StyledGridWrapper>
-          </AccordionDetails>
-        )}
-        {loading && <CircularProgress></CircularProgress>}
-      </Accordion>
+          )}
+          {loading && <CircularProgress></CircularProgress>}
+        </Grid>
+        <Grid item xs={12} component={Paper}>
+          {!loading && (
+            <AccordionDetails>
+              <StyledGridWrapper>
+                <StyledGrid
+                  container
+                  justifyContent='center'
+                  alignItems='center'>
+                  {orders
+                    .filter((item) => item.Completed === 1)
+                    .map((item, i) => {
+                      return (
+                        <StyledGridItem
+                          item
+                          xs={12}
+                          sm={6}
+                          md={4}
+                          key={i + item.Completed}>
+                          <OrderCard
+                            info={item}
+                            moveOrder={moveOrder}
+                            deleteOrder={deleteOrder}></OrderCard>
+                        </StyledGridItem>
+                      );
+                    })}
+                </StyledGrid>
+              </StyledGridWrapper>
+            </AccordionDetails>
+          )}
+          {loading && <CircularProgress></CircularProgress>}
+        </Grid>
+      </Grid>
     </StyledExpandWrapper>
   );
 }
