@@ -8,19 +8,9 @@ import CheckIcon from "@mui/icons-material/Check";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import moment from "moment";
-import styled from "styled-components";
-import { Divider, Grid, CardActions, IconButton } from "@mui/material";
+import { Divider, CardActions, IconButton, Stack } from "@mui/material";
 import UndoIcon from "@mui/icons-material/Undo";
 import "../styles/Order.css";
-
-let DateDiv = styled.div`
-  display: flex;
-  justify-content: center;
-  flex-direction: row;
-  flex-wrap: wrap;
-  text-align: center;
-  gap: 4px;
-`;
 
 export default function OrderCard(props) {
   let info = props.info;
@@ -61,44 +51,38 @@ export default function OrderCard(props) {
   };
 
   return (
-    <Card style={{ border: "1px solid grey" }}>
-      <CardHeader title={info.Name} subheader={"$" + info.Price} />
-      <Divider></Divider>
+    <Card style={{ border: "2px solid grey" }}>
+      <CardHeader
+        title={info.Name}
+        subheader={"$" + info.Price}
+        style={{
+          backgroundColor: "black",
+          boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px;",
+        }}
+      />
       <CardContent>
-        <Grid container direction='row' justifyContent='center'>
-          <Grid
-            item
-            xs={6}
-            className='info-grid-item'
-            style={{ borderRight: "1px solid grey" }}>
-            <Typography
-              variant='caption'
-              color='text.secondary'
-              style={{ textAlign: "center" }}>
-              Customer
-            </Typography>
-            <Typography variant='h6' style={{ textAlign: "center" }}>
+        <Stack justifyContent='center'>
+          <Stack direction='row' justifyContent='space-between'>
+            <Typography variant='h6'>Customer</Typography>
+            <Typography variant='h6' color='text.secondary'>
               {fn.length > 1 && ln.length > 1 && fn + " " + ln}
               {fn.length === 0 && ln.length === 0 && "Anonymous"}
             </Typography>
-          </Grid>
-          <Grid
-            item
-            xs={6}
-            className='info-grid-item'
-            style={{ borderLeft: "1px solid grey" }}>
-            <Typography
-              variant='caption'
-              color='text.secondary'
-              style={{ textAlign: "center" }}>
-              Time
-            </Typography>
-            <DateDiv>
-              <Typography variant='h6'>{date}</Typography>
-              <Typography variant='h6'>{time}</Typography>
-            </DateDiv>
-          </Grid>
-        </Grid>
+          </Stack>
+          <Divider
+            style={{ marginTop: "1rem", marginBottom: "1rem" }}></Divider>
+          <Stack direction='row' justifyContent='space-between'>
+            <Typography variant='h6'>Time</Typography>
+            <Stack direction='row' gap={1}>
+              <Typography variant='h6' color='text.secondary'>
+                {date}
+              </Typography>
+              <Typography variant='h6' color='text.secondary'>
+                {time}
+              </Typography>
+            </Stack>
+          </Stack>
+        </Stack>
       </CardContent>
       <CardActions disableSpacing className='card-actions'>
         <IconButton onClick={() => props.editOrder(info)}>
