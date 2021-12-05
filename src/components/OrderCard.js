@@ -21,11 +21,6 @@ let DateDiv = styled.div`
   gap: 4px;
 `;
 
-let DividerWrapper = styled(Grid)`
-  display: flex;
-  justify-content: center;
-`;
-
 export default function OrderCard(props) {
   let info = props.info;
   let fn = info.First_Name === null ? "" : info.First_Name;
