@@ -6,6 +6,7 @@ import axiosClient from "../utils/axiosClient";
 import Typography from "@mui/material/Typography";
 import CheckIcon from "@mui/icons-material/Check";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import moment from "moment";
 import styled from "styled-components";
 import { Divider, Grid, CardActions, IconButton } from "@mui/material";
@@ -100,6 +101,9 @@ export default function OrderCard(props) {
         </Grid>
       </CardContent>
       <CardActions disableSpacing className='card-actions'>
+        <IconButton onClick={() => props.editOrder(info)}>
+          <EditIcon />
+        </IconButton>
         <IconButton onClick={() => deleteOrder(info.Order_ID)}>
           <DeleteIcon />
         </IconButton>
