@@ -90,6 +90,9 @@ export default function Order() {
   const deleteOrder = (order) => {
     const arr = orders.filter((item) => item !== order);
     setOrders(arr);
+    axiosClient.get("/ordersInfo").then((res) => {
+      setOrdersInfo(res.data);
+    });
   };
 
   const addOrder = () => {
@@ -172,7 +175,7 @@ export default function Order() {
                         <Typography
                           variant='body1'
                           style={{ textAlign: "end" }}>
-                          {item.spent}
+                          ${item.spent}
                         </Typography>
                       </Stack>
                     </Stack>
