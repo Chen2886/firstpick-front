@@ -18,7 +18,7 @@ import { FormControlLabel } from "@mui/material";
 import { Checkbox } from "@mui/material";
 
 export default function OrderAddDialog(props) {
-  const [value, setValue] = React.useState(new Date());
+  const [date, setDate] = React.useState(new Date());
   const [annoymousChecked, setAnnoymousChecked] = React.useState(false);
   const [selectedRecipe, setSelectedRecipe] = React.useState(
     props.recipes[0] === undefined ? 0 : props.recipes[0].Recipe_ID
@@ -29,7 +29,7 @@ export default function OrderAddDialog(props) {
 
   const addOrder = () => {
     var reqObj = {
-      date: value.toISOString(),
+      date: date.toISOString(),
       Recipe_ID: selectedRecipe,
     };
     if (!annoymousChecked) {
@@ -37,7 +37,7 @@ export default function OrderAddDialog(props) {
     }
 
     axiosClient.post("/orders", reqObj).then((res) => {
-      setValue(new Date());
+      setDate(new Date());
       props.addOrder();
       props.setOpenAddDialog(false);
     });
@@ -63,9 +63,9 @@ export default function OrderAddDialog(props) {
               style={{ marginTop: "5rem" }}
               renderInput={(props) => <TextField {...props} />}
               label='DateTimePicker'
-              value={value}
+              value={date}
               onChange={(newValue) => {
-                setValue(newValue);
+                setDate(newValue);
               }}
             />
           </LocalizationProvider>
