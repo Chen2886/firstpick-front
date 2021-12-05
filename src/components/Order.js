@@ -62,6 +62,9 @@ export default function Order() {
       setOrders(res.data);
       setLoading(false);
     });
+    axiosClient.get("/ordersInfo").then((res) => {
+      console.log(res.data);
+    });
     axiosClient.get("/recipe").then((res) => {
       setRecipes(res.data);
     });
@@ -83,6 +86,12 @@ export default function Order() {
     setOrders(arr);
   };
 
+  const addOrder = () => {
+    axiosClient.get("/orders").then((res) => {
+      setOrders(res.data);
+    });
+  };
+
   return (
     <StyledExpandWrapper>
       <OrderAddDialog
@@ -90,9 +99,10 @@ export default function Order() {
         recipes={recipes}
         customers={customers}
         openAddDialog={openAddDialog}
-        setOpenAddDialog={setOpenAddDialog}></OrderAddDialog>
-      <Grid container>
-        <Grid item xs={12} component={Paper}>
+        setOpenAddDialog={setOpenAddDialog}
+        addOrder={addOrder}></OrderAddDialog>
+      <Grid container gap={4}>
+        <Grid item xs={8} component={Paper}>
           {!loading && (
             <StyledGridWrapper>
               <StyledGrid container justifyContent='center' alignItems='center'>
@@ -104,7 +114,6 @@ export default function Order() {
                         item
                         xs={12}
                         sm={6}
-                        md={4}
                         key={i + item.Completed}>
                         <OrderCard
                           info={item}
@@ -123,6 +132,7 @@ export default function Order() {
           )}
           {loading && <CircularProgress></CircularProgress>}
         </Grid>
+        <Grid item xs={4} component={Paper}></Grid>
         <Grid item xs={12} component={Paper}>
           {!loading && (
             <AccordionDetails>

@@ -38,6 +38,7 @@ export default function OrderAddDialog(props) {
 
     axiosClient.post("/orders", reqObj).then((res) => {
       setValue(new Date());
+      props.addOrder();
       props.setOpenAddDialog(false);
     });
   };
