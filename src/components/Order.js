@@ -16,6 +16,7 @@ import {
 import styled from "styled-components";
 import { AddCircle } from "@mui/icons-material";
 import OrderAddDialog from "./OrderAddDialog";
+import OrderEditDialog from "./OrderEditDialog";
 
 const StyledGrid = styled(Grid)`
   width: 100%;
@@ -27,8 +28,7 @@ const StyledGridItem = styled(Grid)`
   padding: 1rem;
 `;
 
-const AddOrderGridItem = styled(Grid)`
-  padding: 1rem;
+const AddOrderGridItem = styled.div`
   display: flex;
   justify-content: center;
 `;
@@ -42,6 +42,7 @@ const StyledGridWrapper = styled(Paper)`
 
 const StyledAddButton = styled(IconButton)`
   font-size: 50px;
+  padding: 0;
 `;
 
 const StyledExpandWrapper = styled.div`
@@ -60,6 +61,7 @@ export default function Order() {
   const [recipes, setRecipes] = React.useState([]);
   const [customers, setCustomers] = React.useState([]);
   const [openAddDialog, setOpenAddDialog] = React.useState(false);
+  const [editInfo, setEditInfo] = React.useState(undefined);
 
   // useEffect with empty array runs when components mount
   useEffect(() => {
@@ -96,12 +98,20 @@ export default function Order() {
   };
 
   const addOrder = () => {
+    pullOrders();
+  };
+
+  const pullOrders = () => {
     axiosClient.get("/orders").then((res) => {
       setOrders(res.data);
     });
     axiosClient.get("/ordersInfo").then((res) => {
       setOrdersInfo(res.data);
     });
+  };
+
+  const editOrder = (info) => {
+    setEditInfo(info);
   };
 
   return (
@@ -113,36 +123,43 @@ export default function Order() {
         openAddDialog={openAddDialog}
         setOpenAddDialog={setOpenAddDialog}
         addOrder={addOrder}></OrderAddDialog>
+      <OrderEditDialog
+        info={editInfo}
+        recipes={recipes}
+        customers={customers}
+        editOrder={editOrder}
+        pullOrders={pullOrders}></OrderEditDialog>
       <Grid container>
         <PaddedGrid item xs={9}>
           {!loading && (
             <StyledGridWrapper>
               <StyledGrid container justifyContent='center' alignItems='center'>
-                <StyledGridItem xs={12}>
-                  <Typography variant='h4'>In Progress</Typography>
+                <StyledGridItem item xs={12}>
+                  <Stack
+                    justifyContent='space-between'
+                    direction='row'
+                    alignItems='flex-start'>
+                    <Typography variant='h4'>In Progress</Typography>
+                    <AddOrderGridItem item xs={12}>
+                      <StyledAddButton onClick={() => setOpenAddDialog(true)}>
+                        <AddCircle fontSize='inherit'></AddCircle>
+                      </StyledAddButton>
+                    </AddOrderGridItem>
+                  </Stack>
                 </StyledGridItem>
                 {orders
                   .filter((item) => item.Completed === 0)
                   .map((item, i) => {
                     return (
-                      <StyledGridItem
-                        item
-                        xs={12}
-                        sm={6}
-                        lg={4}
-                        key={i + item.Completed}>
+                      <StyledGridItem item xs={12} sm={6} lg={4} key={i}>
                         <OrderCard
                           info={item}
                           moveOrder={moveOrder}
-                          deleteOrder={deleteOrder}></OrderCard>
+                          deleteOrder={deleteOrder}
+                          editOrder={editOrder}></OrderCard>
                       </StyledGridItem>
                     );
                   })}
-                <AddOrderGridItem item xs={12}>
-                  <StyledAddButton onClick={() => setOpenAddDialog(true)}>
-                    <AddCircle fontSize='inherit'></AddCircle>
-                  </StyledAddButton>
-                </AddOrderGridItem>
               </StyledGrid>
             </StyledGridWrapper>
           )}
@@ -153,11 +170,11 @@ export default function Order() {
             <div style={{ padding: "1rem" }}>
               <Typography variant='h4'>Leaderboard</Typography>
             </div>
-            {ordersInfo.map((item) => (
-              <div>
+            {ordersInfo.map((item, i) => (
+              <div key={i}>
                 <Card>
                   <CardHeader
-                    title={item.name}
+                    title={`#${i + 1} ${item.name}`}
                     titleTypographyProps={{ variant: "h6" }}
                     style={{ paddingBottom: "0" }}></CardHeader>
                   <CardContent>
@@ -175,7 +192,7 @@ export default function Order() {
                         <Typography
                           variant='body1'
                           style={{ textAlign: "end" }}>
-                          ${item.spent}
+                          {"$" + item.spent}
                         </Typography>
                       </Stack>
                     </Stack>
@@ -190,23 +207,19 @@ export default function Order() {
           {!loading && (
             <StyledGridWrapper>
               <StyledGrid container justifyContent='center' alignItems='center'>
-                <StyledGridItem xs={12}>
+                <StyledGridItem item xs={12}>
                   <Typography variant='h4'>Completed</Typography>
                 </StyledGridItem>
                 {orders
                   .filter((item) => item.Completed === 1)
                   .map((item, i) => {
                     return (
-                      <StyledGridItem
-                        item
-                        xs={12}
-                        sm={6}
-                        md={4}
-                        key={i + item.Completed}>
+                      <StyledGridItem item xs={12} sm={6} md={4} key={i}>
                         <OrderCard
                           info={item}
                           moveOrder={moveOrder}
-                          deleteOrder={deleteOrder}></OrderCard>
+                          deleteOrder={deleteOrder}
+                          editOrder={editOrder}></OrderCard>
                       </StyledGridItem>
                     );
                   })}
