@@ -12,7 +12,8 @@ import {
 } from "@mui/material";
 import styled from "styled-components";
 import { AddCircle } from "@mui/icons-material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+//import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import RecipeAddDialog from "./RecipeAddDialog";
 
 const StyledGrid = styled(Grid)`
   width: 100%;
@@ -47,12 +48,13 @@ const StyledExpandWrapper = styled.div`
 `;
 
 export default function Order() {
-  /*const [currentOrder, setCurrentOrder] = React.useState({});
-  const [completedOrder, setCompletedOrder] = React.useState({});
-  const [expand, setExpand] = React.useState([true, true]);*/
-  const [loading, setLoading] = React.useState(true);
 
+  const [ingredients, setIngredients] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
   const [recipe, setRecipe] = React.useState({});
+  const [openAddDialog, setOpenAddDialog] = React.useState(false);
+  const [recipeID, setRecipeID] = React.useState(0);
+  const [ingredientID, setIngredientID] = React.useState(0);
 
   // useEffect with empty array runs when components mount
   useEffect(() => {
@@ -60,7 +62,19 @@ export default function Order() {
         setRecipe(res.data);
         setLoading(false);
       });
-  }, []);
+    axiosClient.get("/allIngredients").then((res) => {
+        setIngredients(res.data);
+      });
+    axiosClient.get("/numRecipes").then((res) => {
+        setRecipeID(res.data);
+      });
+    axiosClient.get("/numIngredients").then((res) => {
+        setIngredientID(res.data);
+      });
+  },[]);
+
+
+  
 
   /*const handleExpand = (index) => {
     let arr = expand.slice();
@@ -92,12 +106,36 @@ export default function Order() {
     }
   };*/
 
+  const StyledAddButton = styled(IconButton)`
+  font-size: 50px;
+  padding: 0;
+`;
+
 
   return (
+
     <StyledExpandWrapper>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography>Recipes</Typography>
-        </AccordionSummary>
+          <RecipeAddDialog
+        key={openAddDialog}
+        //recipes={recipes}
+        //customers={customers}
+        ingredients={ingredients}
+        openAddDialog={openAddDialog}
+        setOpenAddDialog={setOpenAddDialog}
+        recipeID = {recipeID}
+        ingredientID = {ingredientID}
+        //addOrder={addOrder}
+        ></RecipeAddDialog>
+        {/*<AccordionSummary expandIcon={<AddIcon /*onClick={() => deleteOrder(info.Order_ID)}></AddIcon>}>
+          <Typography variant='h4'> Recipes</Typography>
+        </AccordionSummary>*/}
+
+<AccordionSummary expandIcon={
+<StyledAddButton onClick={() => setOpenAddDialog(true)}>
+  <AddCircle fontSize='inherit'></AddCircle>
+  </StyledAddButton>}>
+  <Typography variant='h4'> Recipes</Typography>
+  </AccordionSummary>
         {!loading && (
           <AccordionDetails>
             <StyledGridWrapper>
