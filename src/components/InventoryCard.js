@@ -12,6 +12,8 @@ import { Divider, Grid, CardActions, IconButton } from "@mui/material";
 import UndoIcon from "@mui/icons-material/Undo";
 import "../styles/Order.css";
 import styledGridItem from "./Recipe";
+import EditIcon from '@mui/icons-material/Edit';
+
 
 let DateDiv = styled.div`
   display: flex;
@@ -36,6 +38,8 @@ export default function InventoryCard(props) {
     let Amount_Left = info.Amount_Left === null ? "" : info.Amount_Left;
 
     const [ingredients, setIngredients] = React.useState([]);
+    const [openEditDialog, setOpenEditDialog] = React.useState(false);
+
     useEffect(() => {
         // use axiosClient created to get all ingredient lists
         axiosClient.get("/inventory", {params: {Ingredient}},)
@@ -43,6 +47,11 @@ export default function InventoryCard(props) {
             setIngredients(res.data);
             //console.log(res.data);
             });
+        axiosClient.post("/inventory", {params: {Ingredient}},)
+            .then((res) => {
+            setIngredients(res.data);
+            //console.log(res.data);
+        });
       }, []);
 
 
@@ -57,6 +66,17 @@ export default function InventoryCard(props) {
                 //   </StyledGridItem>
           //))
           }
+          <CardActions disableSpacing className='card-actions'>
+          {/* <IconButton onClick={() => deleteRecipe(info.Recipe_ID)}> */}
+          <IconButton>
+            <DeleteIcon />
+          </IconButton>
+          {(
+            <IconButton>
+              <EditIcon />
+          </IconButton>
+          )}
+        </CardActions>
 
         </Card>
       );

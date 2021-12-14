@@ -1,8 +1,11 @@
 import React, { useEffect } from "react";
 import InventoryCard from "./InventoryCard";
 import axiosClient from "../utils/axiosClient";
+import InventoryAddDialog from "./InventoryAddDialog";
+
 import {
   Grid,
+  Stack,
   IconButton,
   Accordion,
   Typography,
@@ -46,32 +49,52 @@ const StyledExpandWrapper = styled.div`
   margin-top: 2rem;
 `;
 
-export default function Order() {
-  /*const [currentOrder, setCurrentOrder] = React.useState({});
-  const [completedOrder, setCompletedOrder] = React.useState({});
-  const [expand, setExpand] = React.useState([true, true]);*/
+export default function Inv() {
   const [loading, setLoading] = React.useState(true);
+  const [openAddDialog, setOpenAddDialog] = React.useState(false);
+  const [amountLeft, setAmountLeft] = React.useState(0);
+  const [ingredient, setIngredient] = React.useState(0);
+  const [inventory, setInventory] = React.useState(0);
 
-  const [recipe, setRecipe] = React.useState({});
 
   // useEffect with empty array runs when components mount
   useEffect(() => {
     axiosClient.get("/inventory").then((res) => {
-        setRecipe(res.data);
+        setIngredient(res.data);
         setLoading(false);
       });
+    axiosClient.get("/invIngredients").then((res) => {
+        setIngredient(res.data);
+    });
   }, []);
 
   return (
     <StyledExpandWrapper>
+      <InventoryAddDialog
+        key={openAddDialog}
+        openAddDialog={openAddDialog}
+        setOpenAddDialog={setOpenAddDialog}
+        ingredient={ingredient}
+        >
+        </InventoryAddDialog>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography>Inventory</Typography>
         </AccordionSummary>
         {!loading && (
           <AccordionDetails>
             <StyledGridWrapper>
+            <Stack
+                    justifyContent='space-between'
+                    direction='row'
+                    alignItems='flex-start'>
+                    <AddOrderGridItem item xs={12}>
+                      <StyledAddButton onClick={() => setOpenAddDialog(true)}>
+                        <AddCircle fontSize='inherit'></AddCircle>
+                      </StyledAddButton>
+                    </AddOrderGridItem>
+                  </Stack>
               <StyledGrid container justifyContent='center' alignItems='center'>
-                {recipe.map((item, i) => (
+                {ingredient.map((item, i) => (
                   <StyledGridItem item xs={4} key={i}>
                     <InventoryCard
                       info={item}
