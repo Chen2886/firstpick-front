@@ -63,8 +63,8 @@ export default function OrderCard(props) {
       <CardContent>
         <Stack justifyContent='center'>
           <Stack direction='row' justifyContent='space-between'>
-            <Typography variant='h6'>Customer</Typography>
-            <Typography variant='h6' color='text.secondary'>
+            <Typography variant='body1' color='text.secondary'>Customer</Typography>
+            <Typography variant='body1'>
               {fn.length > 1 && ln.length > 1 && fn + " " + ln}
               {fn.length === 0 && ln.length === 0 && "Anonymous"}
             </Typography>
@@ -72,12 +72,12 @@ export default function OrderCard(props) {
           <Divider
             style={{ marginTop: "1rem", marginBottom: "1rem" }}></Divider>
           <Stack direction='row' justifyContent='space-between'>
-            <Typography variant='h6'>Time</Typography>
+            <Typography variant='body1' color='text.secondary'>Time</Typography>
             <Stack direction='row' gap={1}>
-              <Typography variant='h6' color='text.secondary'>
+              <Typography variant='body1'>
                 {date}
               </Typography>
-              <Typography variant='h6' color='text.secondary'>
+              <Typography variant='body1'>
                 {time}
               </Typography>
             </Stack>
