@@ -130,7 +130,7 @@ export default function Order() {
         editOrder={editOrder}
         pullOrders={pullOrders}></OrderEditDialog>
       <Grid container>
-        <PaddedGrid item xs={9}>
+        <PaddedGrid item xs={12} md={9}>
           {!loading && (
             <StyledGridWrapper>
               <StyledGrid container justifyContent='center' alignItems='center'>
@@ -151,7 +151,7 @@ export default function Order() {
                   .filter((item) => item.Completed === 0)
                   .map((item, i) => {
                     return (
-                      <StyledGridItem item xs={12} sm={6} lg={4} key={i}>
+                      <StyledGridItem item xs={12} sm={9} md={6} lg={4} key={i}>
                         <OrderCard
                           info={item}
                           moveOrder={moveOrder}
@@ -165,7 +165,7 @@ export default function Order() {
           )}
           {loading && <CircularProgress></CircularProgress>}
         </PaddedGrid>
-        <PaddedGrid item xs={3}>
+        <PaddedGrid item xs={12} md={3}>
           <StyledGridWrapper>
             <div style={{ padding: "1rem" }}>
               <Typography variant='h4'>Leaderboard</Typography>
