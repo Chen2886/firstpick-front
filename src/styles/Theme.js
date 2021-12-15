@@ -1,15 +1,19 @@
-import { createTheme } from "@mui/material/styles";
-import { orange, blue } from "@mui/material/colors";
+import { createTheme } from "@material-ui/core";
 
-export const buttonTheme = createTheme({
+const theme = createTheme({
   palette: {
+    type: "dark",
     primary: {
-      // Purple and green play nicely together.
-      main: orange[500],
+      main: "#32C9BD",
     },
     secondary: {
-      // This is green.A700 as hex.
-      main: blue[800],
+      main: "#FFC107",
     },
   },
+  typography: {
+    fontFamily: `'Montserrat', sans-serif`,
+  },
+  shadows: ["none"],
 });
+
+export default theme;

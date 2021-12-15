@@ -17,36 +17,51 @@ import FormControl from "@mui/material/FormControl";
 import { FormControlLabel } from "@mui/material";
 import { Checkbox } from "@mui/material";
 
-export default function OrderAddDialog(props) {
-  const [date, setDate] = React.useState(new Date());
+export default function OrderEditDialog(props) {
+  const [date, setDate] = React.useState();
   const [annoymousChecked, setAnnoymousChecked] = React.useState(false);
-  const [selectedRecipe, setSelectedRecipe] = React.useState(
-    props.recipes[0] === undefined ? 0 : props.recipes[0].Recipe_ID
-  );
-  const [selectedCustomer, setSelectedCustomer] = React.useState(
-    props.customers[0] === undefined ? 0 : props.customers[0].id
-  );
+  const [selectedRecipe, setSelectedRecipe] = React.useState();
+  const [selectedCustomer, setSelectedCustomer] = React.useState();
 
-  const addOrder = () => {
+  React.useEffect(() => {
+    if (props.info !== undefined) {
+      if (
+        props.info.Customer_ID === undefined ||
+        props.info.Customer_ID === null
+      ) {
+        setAnnoymousChecked(true);
+        setSelectedCustomer(props.customers[0].id);
+      } else {
+        setAnnoymousChecked(false);
+        setSelectedCustomer(props.info.Customer_ID);
+      }
+      setSelectedRecipe(props.info.Recipe_ID);
+      setDate(new Date(props.info.Date));
+    }
+  }, [props]);
+
+  const updateOrder = () => {
     var reqObj = {
       date: date.toISOString(),
       Recipe_ID: selectedRecipe,
+      Order_ID: props.info.Order_ID,
     };
     if (!annoymousChecked) {
       reqObj.Customer_ID = selectedCustomer;
+    } else {
+      reqObj.Customer_ID = null;
     }
 
-    axiosClient.post("/orders", reqObj).then((res) => {
+    axiosClient.put("/orders", reqObj).then((res) => {
       setDate(new Date());
-      props.addOrder();
-      props.setOpenAddDialog(false);
+      props.editOrder(undefined);
+      props.pullOrders();
     });
   };
 
   return (
-    <Dialog
-      open={props.openAddDialog === undefined ? false : props.openAddDialog}>
-      <DialogTitle>Add Order</DialogTitle>
+    <Dialog open={props.info !== undefined}>
+      <DialogTitle>Edit Order</DialogTitle>
       <DialogContent>
         <DialogContentText>
           Please enter the order information
@@ -114,8 +129,8 @@ export default function OrderAddDialog(props) {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => props.setOpenAddDialog(false)}>Cancel</Button>
-        <Button onClick={addOrder}>Add Order</Button>
+        <Button onClick={() => props.editOrder(undefined)}>Cancel</Button>
+        <Button onClick={updateOrder}>Update Order</Button>
       </DialogActions>
     </Dialog>
   );
