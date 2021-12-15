@@ -16,8 +16,7 @@ export default function CustomerAddDialog(props) {
     const [Email, setEmail] = React.useState("");
     const [Phone, setPhone] = React.useState("");
 
-    const addd = () => {
-        console.log(FN, LN, Age, Email, Phone)
+    const addToBack = () => {
         axiosClient.post("/customers", {
             First_Name: FN, Last_Name: LN, Age: Age === '' ? null : Age, Email: Email, Phone_Number: Phone
         }).then((res) => {
@@ -93,7 +92,7 @@ export default function CustomerAddDialog(props) {
             </DialogContent>
             <DialogActions>
                 <Button onClick={() => props.setOpenAddDialog(false)}>Cancel</Button>
-                <Button onClick={addd}>Add Order</Button>
+                <Button onClick={addToBack}>Add Order</Button>
             </DialogActions>
         </Dialog>
     );
