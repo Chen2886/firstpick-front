@@ -167,7 +167,7 @@ export default function Order() {
         </PaddedGrid>
         <PaddedGrid item xs={12} md={3}>
           <StyledGridWrapper>
-            <div style={{ padding: "1rem" }}>
+            <div style={{ padding: "1rem", overflow: 'hidden' }}>
               <Typography variant='h4'>Leaderboard</Typography>
             </div>
             {ordersInfo.map((item, i) => (
